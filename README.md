@@ -17,7 +17,9 @@
 11. [Build Instructions](#build-instructions)
 12. [Flash Instructions](#flash-instructions)
 13. [Updating the App](#updating-the-app)
-14. [Lessons Learned](#lessons-learned)
+14. [Planned Changes](#planned-changes)
+15. [Lessons Learned](#lessons-learned)
+16. [Repository History](#repository-history)
 
 ---
 
@@ -526,12 +528,12 @@ source /mnt/yoctobuild/poky/oe-init-build-env /mnt/yoctobuild/poky/build
 
 # 2. Build the Electron app AppImage on dev machine
 cd ~/ReactProjects/ElectronProjects/game-console-menu
-npm run package:pi   # produces dist/Game-Console-Menu-1.0.0-armv7l.AppImage
+npm run package:pi   # produces dist/Game-Console-Menu-1.0.5-armv7l.AppImage
 
 # 3. Extract the AppImage (cannot run arm binary on x86)
-OFFSET=$(grep -boa 'hsqs' dist/Game-Console-Menu-1.0.0-armv7l.AppImage | head -1 | cut -d: -f1)
+OFFSET=$(grep -boa 'hsqs' dist/Game-Console-Menu-1.0.5-armv7l.AppImage | head -1 | cut -d: -f1)
 rm -rf squashfs-root
-unsquashfs -offset $OFFSET dist/Game-Console-Menu-1.0.0-armv7l.AppImage
+unsquashfs -offset $OFFSET dist/Game-Console-Menu-1.0.5-armv7l.AppImage
 
 # 4. Copy extracted app to Yocto layer
 rm -rf /mnt/yoctobuild/poky/meta-game-console/recipes-apps/game-console-menu/files/squashfs-root
@@ -579,9 +581,9 @@ cd ~/ReactProjects/ElectronProjects/game-console-menu
 npm run package:pi
 
 # 2. Re-extract
-OFFSET=$(grep -boa 'hsqs' dist/Game-Console-Menu-1.0.0-armv7l.AppImage | head -1 | cut -d: -f1)
+OFFSET=$(grep -boa 'hsqs' dist/Game-Console-Menu-1.0.5-armv7l.AppImage | head -1 | cut -d: -f1)
 rm -rf squashfs-root
-unsquashfs -offset $OFFSET dist/Game-Console-Menu-1.0.0-armv7l.AppImage
+unsquashfs -offset $OFFSET dist/Game-Console-Menu-1.0.5-armv7l.AppImage
 
 # 3. Update Yocto layer
 rm -rf /mnt/yoctobuild/poky/meta-game-console/recipes-apps/game-console-menu/files/squashfs-root
@@ -592,6 +594,18 @@ cp -r squashfs-root \
 cd /mnt/yoctobuild/poky/build
 bitbake game-console-menu -c cleanall && bitbake game-console-image
 ```
+
+---
+
+## Planned Changes
+
+**TODO: shift from a games-only console to a general app/game launcher** — pygame games remain the initial supported format, expanding to general Python applications. See the `pi-cube-game-console` and `windows-cube-game-console` READMEs for the in-progress app-side pivot.
+
+This layer currently bakes the "game console" naming into several places that will need to be updated together once the app itself is renamed (not before — this layer just packages whatever the app is called):
+- Recipe: `recipes-apps/game-console-menu/game-console-menu.bb`
+- Install path: `/opt/game-console-menu/`
+- systemd service + scripts: `game-console-menu.service`, `start-game-console.sh`, `start-app.sh`
+- Image recipe + output: `recipes-core/images/game-console-image.bb` → `game-console-image-raspberrypi4.rootfs.wic.bz2`
 
 ---
 
@@ -630,3 +644,11 @@ DISTRO_FEATURES:append = " systemd usrmerge x11"
 
 ### 8. RPM dependency scanning
 Yocto's RPM packager scans binaries for shared library dependencies and auto-generates `Requires:` entries. For pre-built binaries like Electron, use `INSANE_SKIP`, `EXCLUDE_FROM_SHLIBS`, and `RPROVIDES` to suppress these.
+
+---
+
+## Repository History
+The repository moved on 2026-09-23 from the `Brickhouse4U` GitHub account to [`javersa86`](https://github.com/javersa86), consolidating all portfolio projects under one account. History, issues, and pull requests came with it, and old `github.com/Brickhouse4U/...` links redirect here automatically. To update an existing clone:
+```bash
+git remote set-url origin https://github.com/javersa86/meta-game-console.git
+```

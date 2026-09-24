@@ -1,0 +1,34 @@
+SDL = -I$(STAGING_INCDIR)/SDL2 -D_REENTRANT -lSDL2
+FONT = -lSDL2_ttf
+IMAGE = -lSDL2_image
+MIXER = -lSDL2_mixer
+
+base src_c/base.c $(SDL)
+color src_c/color.c $(SDL)
+constants src_c/constants.c $(SDL)
+display src_c/display.c $(SDL)
+draw src_c/draw.c $(SDL)
+event src_c/event.c $(SDL)
+font src_c/font.c $(SDL) $(FONT) -lfreetype
+image src_c/image.c $(SDL)
+imageext src_c/imageext.c $(SDL) $(IMAGE) -lpng -ljpeg -lz
+joystick src_c/joystick.c $(SDL)
+key src_c/key.c $(SDL)
+mask src_c/mask.c src_c/bitmask.c $(SDL)
+math src_c/math.c $(SDL)
+mixer src_c/mixer.c $(SDL) $(MIXER)
+mouse src_c/mouse.c $(SDL)
+music src_c/music.c $(SDL) $(MIXER)
+newbuffer src_c/newbuffer.c $(SDL)
+pixelarray src_c/pixelarray.c $(SDL)
+pixelcopy src_c/pixelcopy.c $(SDL)
+rect src_c/rect.c $(SDL)
+rwobject src_c/rwobject.c $(SDL)
+surface src_c/surface.c src_c/alphablit.c src_c/surface_fill.c src_c/simd_blitters_sse2.c src_c/simd_blitters_avx2.c $(SDL)
+surflock src_c/surflock.c $(SDL)
+time src_c/time.c $(SDL)
+transform src_c/transform.c src_c/rotozoom.c src_c/scale2x.c $(SDL)
+bufferproxy src_c/bufferproxy.c $(SDL)
+controllercompat src_c/controllercompat.c $(SDL)
+gfxdraw src_c/gfxdraw.c $(SDL)
+void src_c/void.c $(SDL)
